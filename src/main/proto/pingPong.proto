@@ -1,0 +1,16 @@
+syntax = "proto3";
+option java_package = "com.senthuran.GRPCFileUpload";
+option java_multiple_files = true;
+
+message Request {
+    string payload = 1;
+}
+
+message Response {
+    string message = 1;
+}
+
+service PingPongService {
+    rpc ping (Request) returns (Response) {
+    }
+}
