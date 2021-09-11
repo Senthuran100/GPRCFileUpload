@@ -21,4 +21,6 @@ dependencies {
     implementation "io.github.lognet:grpc-spring-boot-starter:3.4.3"
     compileOnly 'org.projectlombok:lombok:1.18.12'
     annotationProcessor 'org.projectlombok:lombok:1.18.12'
+    implementation 'com.amazonaws:aws-java-sdk-bom:1.11.1000'
+    implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-aws', version: '2.2.1.RELEASE'
 }
