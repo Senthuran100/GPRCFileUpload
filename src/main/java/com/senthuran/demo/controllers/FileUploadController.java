@@ -1,5 +1,6 @@
 package com.senthuran.demo.controllers;
 
+import com.senthuran.demo.dto.FileDownloadResponse;
 import com.senthuran.demo.dto.FileResponse;
 import com.senthuran.demo.service.S3StorageService;
 import lombok.extern.slf4j.Slf4j;
@@ -24,16 +25,15 @@ public class FileUploadController {
         return new ResponseEntity<>(s3StorageService.saveFile(file), HttpStatus.OK);
     }
 
-    @GetMapping("/download/{fileName}")
-    public ResponseEntity<ByteArrayResource> downloadFile(@PathVariable String fileName) {
-        byte[] data = s3StorageService.downloadFile(fileName);
-        ByteArrayResource resource = new ByteArrayResource(data);
+    @GetMapping("/download/{fileId}")
+    public ResponseEntity<ByteArrayResource> downloadFile(@PathVariable int fileId) {
+        FileDownloadResponse fileDownloadResponse = s3StorageService.getFile(fileId);
+        ByteArrayResource resource = new ByteArrayResource(fileDownloadResponse.getData());
         return ResponseEntity
-                .ok().contentLength(data.length)
+                .ok().contentLength(fileDownloadResponse.getData().length)
                 .header("Content-type", "application/octet-stream")
-                .header("Content-disposition", "attachment; filename=\"" + fileName + "\"")
+                .header("Content-disposition", "attachment; filename=\"" + fileDownloadResponse.getFileName() + "\"")
                 .body(resource);
-
     }
 
     @DeleteMapping("/delete/{fileName}")

@@ -5,6 +5,7 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.amazonaws.util.IOUtils;
+import com.senthuran.demo.dto.FileDownloadResponse;
 import com.senthuran.demo.dto.FileResponse;
 import com.senthuran.demo.repository.FileRepo;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -30,14 +32,14 @@ public class S3StorageService {
     @Autowired
     FileRepo fileRepo;
 
-    private boolean uploadFileToS3(MultipartFile multipartFile,String fileName) {
+    private boolean uploadFileToS3(MultipartFile multipartFile, String fileName) {
         try {
             File fileObj = convertMultiPartFileToFile(multipartFile);
             amazonS3.putObject(new PutObjectRequest(bucketName, fileName, fileObj));
             fileObj.delete();
             return true;
-        } catch (Exception e){
-            log.error("File Upload Exception"+e);
+        } catch (Exception e) {
+            log.error("File Upload Exception" + e);
         }
         return false;
     }
@@ -69,15 +71,27 @@ public class S3StorageService {
         return convertedFile;
     }
 
-    public FileResponse saveFile(MultipartFile file){
+    public FileResponse saveFile(MultipartFile file) {
         String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
-        boolean result = uploadFileToS3(file,fileName);
-        if(result){
-            com.senthuran.demo.model.File fileObj = fileRepo.save(new com.senthuran.demo.model.File(file.getOriginalFilename(),fileName));
-            return new FileResponse("Success",fileObj);
+        boolean result = uploadFileToS3(file, fileName);
+        if (result) {
+            com.senthuran.demo.model.File fileObj = fileRepo.save(new com.senthuran.demo.model.File(file.getOriginalFilename(), fileName));
+            return new FileResponse("Success", fileObj);
         }
-        return new FileResponse("Failure",new com.senthuran.demo.model.File());
-
+        return new FileResponse("Failure", new com.senthuran.demo.model.File());
     }
+
+    public FileDownloadResponse getFile(int id) {
+        Optional<com.senthuran.demo.model.File> file = fileRepo.findById(id);
+        String fileName="";
+        if (file.isPresent()) {
+            com.senthuran.demo.model.File fileObj = file.get();
+            fileName=fileObj.getFilenameS3();
+            log.error("File"+downloadFile(fileName));
+            return new FileDownloadResponse(downloadFile(fileName),fileName);
+        }
+        return new FileDownloadResponse(new byte[0],fileName);
+    }
+
 
 }
