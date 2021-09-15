@@ -1,5 +1,6 @@
 package com.senthuran.demo.controllers;
 
+import com.senthuran.demo.dto.FileDeleteResponse;
 import com.senthuran.demo.dto.FileDownloadResponse;
 import com.senthuran.demo.dto.FileResponse;
 import com.senthuran.demo.service.S3StorageService;
@@ -36,8 +37,8 @@ public class FileUploadController {
                 .body(resource);
     }
 
-    @DeleteMapping("/delete/{fileName}")
-    public ResponseEntity<String> deleteFile(@PathVariable String fileName) {
-        return new ResponseEntity<>(s3StorageService.deleteFile(fileName), HttpStatus.OK);
+    @DeleteMapping("/delete/{fileId}")
+    public ResponseEntity<FileDeleteResponse> deleteFile(@PathVariable int fileId) {
+        return new ResponseEntity<>(s3StorageService.deleteFile(fileId), HttpStatus.OK);
     }
 }

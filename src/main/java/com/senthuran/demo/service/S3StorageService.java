@@ -5,6 +5,7 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.amazonaws.util.IOUtils;
+import com.senthuran.demo.dto.FileDeleteResponse;
 import com.senthuran.demo.dto.FileDownloadResponse;
 import com.senthuran.demo.dto.FileResponse;
 import com.senthuran.demo.repository.FileRepo;
@@ -56,9 +57,14 @@ public class S3StorageService {
         return null;
     }
 
-    public String deleteFile(String fileName) {
-        amazonS3.deleteObject(bucketName, fileName);
-        return fileName + " removed ...";
+    public String deleteFileinS3(String fileName) {
+        try {
+            amazonS3.deleteObject(bucketName, fileName);
+            return "Success";
+        } catch (Exception e) {
+            log.error("Error in deleting the file" + e);
+        }
+        return "Failure";
     }
 
     private File convertMultiPartFileToFile(MultipartFile file) {
@@ -83,14 +89,30 @@ public class S3StorageService {
 
     public FileDownloadResponse getFile(int id) {
         Optional<com.senthuran.demo.model.File> file = fileRepo.findById(id);
-        String fileName="";
+        String fileName = "";
         if (file.isPresent()) {
             com.senthuran.demo.model.File fileObj = file.get();
-            fileName=fileObj.getFilenameS3();
-            log.error("File"+downloadFile(fileName));
-            return new FileDownloadResponse(downloadFile(fileName),fileName);
+            fileName = fileObj.getFilenameS3();
+            log.error("File" + downloadFile(fileName));
+            return new FileDownloadResponse(downloadFile(fileName), fileName);
         }
-        return new FileDownloadResponse(new byte[0],fileName);
+        return new FileDownloadResponse(new byte[0], fileName);
+    }
+
+    public FileDeleteResponse deleteFile(int id) {
+        Optional<com.senthuran.demo.model.File> file = fileRepo.findById(id);
+        String fileName = "";
+        if (file.isPresent()) {
+            com.senthuran.demo.model.File fileObj = file.get();
+            fileName = fileObj.getFilenameS3();
+            String s3Response =  deleteFileinS3(fileName);
+            if(s3Response.equals("Success")) {
+                return new FileDeleteResponse("Success", fileName);
+            } else {
+                return new FileDeleteResponse("Failure to Delete the file from S3",fileName);
+            }
+        }
+        return new FileDeleteResponse("Failure", "Failed to retrieve filename");
     }
 
 
