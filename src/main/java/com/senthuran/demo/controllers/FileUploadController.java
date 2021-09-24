@@ -43,9 +43,9 @@ public class FileUploadController {
 
     @GetMapping("/download/{fileId}")
     public ResponseEntity<ByteArrayResource> downloadFile(@PathVariable int fileId) {
-        List<Error> errorList=fileDownloadRequestValidator.validateDownloadRequest(fileId);
-        if(errorList.size()>0){
-            throw new BadRequestException("File Download Request is Invalid",errorList);
+        List<Error> errorList = fileDownloadRequestValidator.validateDownloadRequest(fileId);
+        if (errorList.size() > 0) {
+            throw new BadRequestException("File Download Request is Invalid", errorList);
         }
         FileDownloadResponse fileDownloadResponse = s3StorageService.getFile(fileId);
         ByteArrayResource resource = new ByteArrayResource(fileDownloadResponse.getData());
@@ -58,6 +58,10 @@ public class FileUploadController {
 
     @DeleteMapping("/delete/{fileId}")
     public ResponseEntity<FileDeleteResponse> deleteFile(@PathVariable int fileId) {
+        List<Error> errorList = fileDownloadRequestValidator.validateDownloadRequest(fileId);
+        if (errorList.size() > 0) {
+            throw new BadRequestException("File Download Request is Invalid", errorList);
+        }
         return new ResponseEntity<>(s3StorageService.deleteFile(fileId), HttpStatus.OK);
     }
 }
