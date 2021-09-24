@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Optional;
@@ -71,6 +72,8 @@ public class S3StorageService {
         File convertedFile = new File(file.getOriginalFilename());
         try (FileOutputStream fos = new FileOutputStream(convertedFile)) {
             fos.write(file.getBytes());
+        } catch(FileNotFoundException exp){
+            log.error("Error file not found",exp);
         } catch (IOException e) {
             log.error("Error converting multipartFile to file", e);
         }
