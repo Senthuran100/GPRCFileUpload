@@ -4,14 +4,15 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.senthuran.demo.dto.ApiResponse;
 import com.senthuran.demo.service.S3StorageService;
+import com.senthuran.demo.validator.FileCreateRequestValidator;
+import com.senthuran.demo.validator.FileDownloadRequestValidator;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -25,6 +26,15 @@ public class FileUploadControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @MockBean
+    private S3StorageService s3StorageService;
+
+    @MockBean
+    private FileCreateRequestValidator fileCreateRequestValidator;
+
+    @MockBean
+    private FileDownloadRequestValidator fileDownloadRequestValidator;
 
     @Test
     public void checkStatus() throws Exception {

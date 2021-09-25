@@ -1,5 +1,8 @@
 package com.senthuran.demo;
 
-class DemoApplicationTests {
+import org.springframework.boot.test.context.SpringBootTest;
+
+@SpringBootTest
+public class DemoApplicationTests {
 
 }
