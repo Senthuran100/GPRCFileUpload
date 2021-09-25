@@ -1,9 +1,7 @@
 package com.senthuran.demo.controllers;
 
+import com.senthuran.demo.dto.*;
 import com.senthuran.demo.dto.Error;
-import com.senthuran.demo.dto.FileDeleteResponse;
-import com.senthuran.demo.dto.FileDownloadResponse;
-import com.senthuran.demo.dto.FileResponse;
 import com.senthuran.demo.exception.BadRequestException;
 import com.senthuran.demo.service.S3StorageService;
 import com.senthuran.demo.validator.FileCreateRequestValidator;
@@ -63,5 +61,11 @@ public class FileUploadController {
             throw new BadRequestException("File Download Request is Invalid", errorList);
         }
         return new ResponseEntity<>(s3StorageService.deleteFile(fileId), HttpStatus.OK);
+    }
+
+    @GetMapping("/checkStatus")
+    public ResponseEntity<ApiResponse> checkStatus() {
+        ApiResponse apiResponse = new ApiResponse(200, "No data", null);
+        return new ResponseEntity<ApiResponse>(apiResponse, HttpStatus.OK);
     }
 }
