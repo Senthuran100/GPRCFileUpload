@@ -55,18 +55,18 @@ public class FileUploadControllerTest {
         MockHttpServletResponse response = result.getResponse();
         String ouputJson = response.getContentAsString();
 
-        assertEquals(ouputJson,inputJson);
-        assertEquals(HttpStatus.OK.value(),response.getStatus());
+        assertEquals(ouputJson, inputJson);
+        assertEquals(HttpStatus.OK.value(), response.getStatus());
     }
 
     @Test
     public void testDeleteFile() throws Exception {
-        int fileId=1;
+        int fileId = 1;
 
-        List<Error> errorList=new ArrayList();
+        List<Error> errorList = new ArrayList();
 
         Mockito.when(fileDownloadRequestValidator.validateDownloadRequest(fileId)).thenReturn(errorList);
-        FileDeleteResponse fileResponse=new FileDeleteResponse();
+        FileDeleteResponse fileResponse = new FileDeleteResponse();
         fileResponse.setStatus("Success");
         fileResponse.setFileName("1633009886476_Tumbnail1.png");
         String inputJson = this.mapToJson(fileResponse);
@@ -74,15 +74,39 @@ public class FileUploadControllerTest {
 
         Mockito.when(s3StorageService.deleteFile(fileId)).thenReturn(fileResponse);
 
-        RequestBuilder requestBuilder=MockMvcRequestBuilders
-                .delete(URI,fileId);
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .delete(URI, fileId);
 
-        MvcResult result= mockMvc.perform(requestBuilder).andReturn();
-        MockHttpServletResponse response= result.getResponse();
+        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+        MockHttpServletResponse response = result.getResponse();
 
         String outputJson = response.getContentAsString();
-        assertEquals(outputJson,inputJson);
-        assertEquals(HttpStatus.OK.value(),response.getStatus());
+        assertEquals(outputJson, inputJson);
+        assertEquals(HttpStatus.OK.value(), response.getStatus());
+    }
+
+    @Test
+    public void testDeleteFilewithFailure() throws Exception {
+        int fileId = 2;
+        List<Error> errorList = new ArrayList();
+
+        Mockito.when(fileDownloadRequestValidator.validateDownloadRequest(fileId)).thenReturn(errorList);
+        FileDeleteResponse fileResponse = new FileDeleteResponse();
+        fileResponse.setStatus("Failure");
+        fileResponse.setFileName("Failed to retrieve filename");
+        String inputJson = this.mapToJson(fileResponse);
+        String URI = "/files/delete/{fileId}";
+        Mockito.when(s3StorageService.deleteFile(fileId)).thenReturn(fileResponse);
+
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .delete(URI, fileId);
+
+        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+        MockHttpServletResponse response = result.getResponse();
+
+        String outputJson = response.getContentAsString();
+        assertEquals(outputJson, inputJson);
+        assertEquals(HttpStatus.OK.value(), response.getStatus());
     }
 
     private String mapToJson(Object object) throws JsonProcessingException {
