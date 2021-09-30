@@ -1,7 +1,9 @@
 package com.senthuran.demo.dto;
 
 import com.senthuran.demo.model.File;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor
 public class FileResponse {
     private String status;
     private File file;
