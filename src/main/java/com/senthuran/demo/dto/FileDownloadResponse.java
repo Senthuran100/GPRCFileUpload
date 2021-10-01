@@ -1,5 +1,8 @@
 package com.senthuran.demo.dto;
 
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor
 public class FileDownloadResponse {
 
     private byte[] data;

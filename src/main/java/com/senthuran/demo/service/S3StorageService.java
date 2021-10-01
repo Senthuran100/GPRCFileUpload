@@ -34,7 +34,7 @@ public class S3StorageService {
     @Autowired
     FileRepo fileRepo;
 
-    private boolean uploadFileToS3(MultipartFile multipartFile, String fileName) {
+    public boolean uploadFileToS3(MultipartFile multipartFile, String fileName) {
         try {
             File fileObj = convertMultiPartFileToFile(multipartFile);
             amazonS3.putObject(new PutObjectRequest(bucketName, fileName, fileObj));
